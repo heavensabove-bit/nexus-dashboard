@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — Your Digital Universe</title>
+
+<style>
+:root {
+    --bg: #090b14;
+    --panel: #111522;
+    --panel-hover: #191f31;
+    --border: #252b40;
+    --text: #edf0ff;
+    --muted: #8c94ad;
+    --accent: #9270ff;
+    --blue: #65caff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 75% 0%, #25204a55, transparent 45%),
+        radial-gradient(ellipse at 0% 100%, #122d4b33, transparent 40%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+button, input {
+    font: inherit;
+}
+
+button, a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 235px;
+    flex-shrink: 0;
+    padding: 30px 18px;
+    border-right: 1px solid var(--border);
+    background: #0b0e18dd;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 10px;
+    margin-bottom: 45px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: 22px;
+    color: white;
+    background: linear-gradient(135deg, #a080ff, #536dff);
+    box-shadow: 0 0 25px #8264ff44;
+}
+
+.logo-name {
+    font-weight: 800;
+    font-size: 21px;
+    letter-spacing: 3px;
+}
+
+.logo-name span {
+    color: var(--accent);
+}
+
+.section-label {
+    padding: 0 12px;
+    margin: 15px 0 10px;
+    color: #707991;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    padding: 12px 13px;
+    margin-bottom: 5px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    transition: .2s;
+    cursor: pointer;
+    background: transparent;
+    text-align: left;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: white;
+    background: linear-gradient(90deg, #9270ff22, #65caff08);
+    border-color: #9270ff22;
+}
+
+.nav-icon {
+    width: 20px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 15px 12px 0;
+    color: #717b96;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #63e6ad;
+    box-shadow: 0 0 10px #63e6ad88;
+    margin-right: 6px;
+}
+
+main {
+    flex: 1;
+    min-width: 0;
+    padding: 28px 4.5%;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 48px;
+}
+
+.breadcrumb {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.breadcrumb strong {
+    color: white;
+    font-weight: 600;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.clock {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: right;
+    line-height: 1.7;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #9270ff66;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #9270ff18;
+}
+
+.hero {
+    margin-bottom: 32px;
+    animation: rise .65s ease both;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+}
+
+h1 {
+    font-size: clamp(32px, 4vw, 49px);
+    letter-spacing: -2px;
+    line-height: 1.15;
+    margin-bottom: 13px;
+}
+
+h1 span {
+    background: linear-gradient(100deg, #b7a1ff, #75cfff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    max-width: 750px;
+    padding: 8px 9px 8px 18px;
+    margin-bottom: 35px;
+    border: 1px solid #343450;
+    border-radius: 14px;
+    background: #111522cc;
+    box-shadow: 0 8px 40px #0002;
+    transition: .25s;
+}
+
+.search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 25px #9270ff17;
+}
+
+.search-symbol {
+    color: #a49acb;
+    font-size: 20px;
+}
+
+.search-box input {
+    flex: 1;
+    min-width: 0;
+    color: white;
+    outline: none;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    padding: 10px 0;
+}
+
+.search-box input::placeholder {
+    color: #707991;
+}
+
+.search-button {
+    background: linear-gradient(135deg, #9270ff, #6d79ff);
+    border: 0;
+    border-radius: 9px;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.search-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 20px #9270ff44;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 33px 0 17px;
+}
+
+.section-heading h2 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.text-button {
+    color: #b6a3ff;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.app-card {
+    min-width: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    color: var(--text);
+    background: linear-gradient(145deg, #151a2a, #101420);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 15px;
+    min-height: 135px;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s, background .2s;
+    animation: rise .5s ease both;
+}
+
+.app-card::after {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    right: -55px;
+    top: -55px;
+    background: var(--glow, #9270ff);
+    opacity: .13;
+    filter: blur(30px);
+    transition: .25s;
+}
+
+.app-card:hover {
+    transform: translateY(-4px);
+    border-color: #7867bb;
+    background: var(--panel-hover);
+}
+
+.app-card:hover::after {
+    opacity: .4;
+}
+
+.app-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    font-size: 20px;
+    background: var(--icon-bg, #9270ff20);
+    border: 1px solid var(--icon-border, #9270ff35);
+}
+
+.app-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.app-description {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.feature {
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: linear-gradient(125deg, #17182b, #101420);
+}
+
+.feature-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.feature h3 {
+    font-size: 13px;
+}
+
+.feature p {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.feature-button {
+    color: #c5b6ff;
+    font-size: 11px;
+    border: 1px solid #9270ff44;
+    border-radius: 8px;
+    background: #9270ff12;
+    padding: 9px 12px;
+    cursor: pointer;
+}
+
+.feature-button:hover {
+    background: #9270ff28;
+}
+
+footer {
+    padding: 30px 0 15px;
+    color: #626b82;
+    font-size: 10px;
+    text-align: center;
+}
+
+#notice {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    max-width: calc(100vw - 44px);
+    padding: 13px 18px;
+    border: 1px solid #9270ff55;
+    border-radius: 12px;
+    background: #171629;
+    color: white;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: .25s;
+    z-index: 10;
+}
+
+#notice.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1000px) {
+    .sidebar { width: 190px; }
+    .apps-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    main { padding: 25px 3%; }
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        width: 65px;
+        padding: 22px 8px;
+    }
+    .logo { padding: 0 5px; margin-bottom: 35px; }
+    .logo-icon { width: 39px; flex-shrink: 0; }
+    .logo-name, .section-label, .nav-label, .sidebar-bottom { display: none; }
+    .nav-item { justify-content: center; padding: 12px 5px; }
+    main { padding: 20px 16px; }
+    .topbar { margin-bottom: 38px; }
+    .apps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .feature-grid { grid-template-columns: 1fr; }
+    h1 { letter-spacing: -1px; }
+}
+
+@media (max-width: 380px) {
+    .search-button { padding: 11px; }
+    .clock { font-size: 10px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">N</div>
+        <div class="logo-name">NE<span>X</span>US</div>
+    </div>
+
+    <div class="section-label">WORKSPACE</div>
+    <button class="nav-item active" data-section="home">
+        <span class="nav-icon">⌂</span><span class="nav-label">Overview</span>
+    </button>
+    <button class="nav-item" data-section="websites">
+        <span class="nav-icon">◈</span><span class="nav-label">Websites</span>
+    </button>
+    <button class="nav-item" data-section="tools">
+        <span class="nav-icon">⚙</span><span class="nav-label">Tools</span>
+    </button>
+
+    <div class="section-label">PERSONAL</div>
+    <button class="nav-item" data-section="notes">
+        <span class="nav-icon">▤</span><span class="nav-label">Notes</span>
+    </button>
+    <button class="nav-item" data-section="bookmarks">
+        <span class="nav-icon">☆</span><span class="nav-label">Bookmarks</span>
+    </button>
+    <button class="nav-item" data-section="games">
+        <span class="nav-icon">✧</span><span class="nav-label">Games</span>
+    </button>
+
+    <div class="sidebar-bottom">
+        <span class="status-dot"></span> NEXUS is ready<br>
+        Your digital universe.
+    </div>
+</aside>
+
+<main>
+    <header class="topbar">
+        <div class="breadcrumb">Workspace / <strong id="breadcrumb">Overview</strong></div>
+        <div class="top-actions">
+            <div class="clock">
+                <div id="time">00:00:00</div>
+                <div id="date">Loading date...</div>
+            </div>
+            <div class="avatar">✦</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="eyebrow">YOUR PERSONAL DIGITAL UNIVERSE</div>
+        <h1>One space.<br><span>Infinite possibilities.</span></h1>
+        <p class="subtitle">Your favorite corners of the internet, all connected in one place.</p>
+    </section>
+
+    <form class="search-box" id="searchForm">
+        <span class="search-symbol">⌕</span>
+        <input id="searchInput" type="text" placeholder="Search the web or enter a website..." autocomplete="off">
+        <button class="search-button" type="submit">Search ↗</button>
+    </form>
+
+    <section id="websitesSection">
+        <div class="section-heading">
+            <div>
+                <h2>Your websites</h2>
+                <p>Your internet, organized.</p>
+            </div>
+            <button class="text-button" id="addWebsite">+ Add website</button>
+        </div>
+
+        <div class="apps-grid" id="appsGrid">
+            <a class="app-card" href="https://www.google.com" target="_blank" rel="noopener noreferrer" style="--glow:#65a6ff">
+                <div class="app-icon" style="--icon-bg:#4285f422;--icon-border:#4285f444">G</div>
+                <div class="app-title">Google</div><div class="app-description">Search anything</div>
+            </a>
+            <a class="app-card" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" style="--glow:#ff4c68">
+                <div class="app-icon" style="--icon-bg:#ff4c6818;--icon-border:#ff4c6844">▶</div>
+                <div class="app-title">YouTube</div><div class="app-description">Videos & creators</div>
+            </a>
+            <a class="app-card" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer" style="--glow:#69e5bc">
+                <div class="app-icon" style="--icon-bg:#69e5bc18;--icon-border:#69e5bc44">✳</div>
+                <div class="app-title">ChatGPT</div><div class="app-description">Ideas & intelligence</div>
+            </a>
+            <a class="app-card" href="https://github.com" target="_blank" rel="noopener noreferrer" style="--glow:#b8b8d8">
+                <div class="app-icon" style="--icon-bg:#b8b8d818;--icon-border:#b8b8d844">⌘</div>
+                <div class="app-title">GitHub</div><div class="app-description">Code & projects</div>
+            </a>
+            <a class="app-card" href="https://www.reddit.com" target="_blank" rel="noopener noreferrer" style="--glow:#ff8957">
+                <div class="app-icon" style="--icon-bg:#ff895718;--icon-border:#ff895744">r</div>
+                <div class="app-title">Reddit</div><div class="app-description">Communities & discussions</div>
+            </a>
+            <a class="app-card" href="https://open.spotify.com" target="_blank" rel="noopener noreferrer" style="--glow:#65e69b">
+                <div class="app-icon" style="--icon-bg:#65e69b18;--icon-border:#65e69b44">♫</div>
+                <div class="app-title">Spotify</div><div class="app-description">Music & playlists</div>
+            </a>
+            <a class="app-card" href="https://www.wikipedia.org" target="_blank" rel="noopener noreferrer" style="--glow:#a9b7d8">
+                <div class="app-icon" style="--icon-bg:#a9b7d818;--icon-border:#a9b7d844">W</div>
+                <div class="app-title">Wikipedia</div><div class="app-description">Explore knowledge</div>
+            </a>
+            <a class="app-card" href="https://modrinth.com" target="_blank" rel="noopener noreferrer" style="--glow:#65e6a0">
+                <div class="app-icon" style="--icon-bg:#65e6a018;--icon-border:#65e6a044">◇</div>
+                <div class="app-title">Modrinth</div><div class="app-description">Minecraft mods</div>
+            </a>
+        </div>
+    </section>
+
+    <section id="featuresSection">
+        <div class="section-heading">
+            <div>
+                <h2>Your command center</h2>
+                <p>Small tools. Big possibilities.</p>
+            </div>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-top"><h3>▤ &nbsp; Personal notes</h3><span>01</span></div>
+                <p>Keep your thoughts, ideas, and plans in one place. Your notes will be saved in this browser.</p>
+                <button class="feature-button" id="openNotes">Open notes ↗</button>
+            </div>
+            <div class="feature">
+                <div class="feature-top"><h3>✧ &nbsp; Quick tools</h3><span>02</span></div>
+                <p>Your own collection of utilities, from a calculator to random generators and mini-games.</p>
+                <button class="feature-button" id="openTools">Explore tools ↗</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>NEXUS © 2026 &nbsp; · &nbsp; YOUR SPACE ON THE INTERNET</footer>
+</main>
+</div>
+
+<div id="notice" role="status"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function updateClock() {
+    const now = new Date();
+    $("time").textContent = now.toLocaleTimeString([], {
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+    });
+    $("date").textContent = now.toLocaleDateString([], {
+        weekday: "short", month: "short", day: "numeric"
+    });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+$("searchForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const query = $("searchInput").value.trim();
+    if (!query) return;
+
+    let destination;
+    try {
+        const candidate = new URL(
+            /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(query) ? query : "https://" + query
+        );
+
+        if (candidate.protocol === "http:" || candidate.protocol === "https:") {
+            destination = candidate.href;
+        }
+    } catch (_) {}
+
+    if (destination && query.includes(".") && !query.includes(" ")) {
+        window.open(destination, "_blank", "noopener,noreferrer");
+    } else {
+        window.open("https://www.google.com/search?q=" + encodeURIComponent(query),
+                    "_blank", "noopener,noreferrer");
+    }
+});
+
+let noticeTimer;
+function notify(message) {
+    $("notice").textContent = message;
+    $("notice").classList.add("show");
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => $("notice").classList.remove("show"), 2600);
+}
+
+function showSection(section) {
+    const titles = {
+        home: "Overview",
+        websites: "Websites",
+        tools: "Tools",
+        notes: "Notes",
+        bookmarks: "Bookmarks",
+        games: "Games"
+    };
+
+    $("breadcrumb").textContent = titles[section] || "Overview";
+
+    document.querySelectorAll(".nav-item").forEach(button => {
+        button.classList.toggle("active", button.dataset.section === section);
+    });
+
+    $("websitesSection").hidden = section !== "home" && section !== "websites";
+    $("featuresSection").hidden = section !== "home";
+
+    if (section === "notes") openNotes();
+    if (section === "tools") openTools();
+    if (section === "bookmarks") showBookmarks();
+    if (section === "games") showGames();
+}
+
+document.querySelectorAll(".nav-item").forEach(button => {
+    button.addEventListener("click", () => showSection(button.dataset.section));
+});
+
+$("addWebsite").addEventListener("click", () => {
+    const name = prompt("What is the website called?");
+    if (!name || !name.trim()) return;
+
+    let address = prompt("Enter its website address (e.g. https://example.com)");
+    if (!address) return;
+    address = address.trim();
+
+    if (!/^https?:\/\//i.test(address)) address = "https://" + address;
+
+    try {
+        const url = new URL(address);
+        if (!["http:", "https:"].includes(url.protocol)) throw new Error();
+        const card = document.createElement("a");
+        card.className = "app-card";
+        card.href = url.href;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        const icon = document.createElement("div");
+        icon.className = "app-icon";
+        icon.textContent = name.trim().charAt(0).toUpperCase();
+
+        const title = document.createElement("div");
+        title.className = "app-title";
+        title.textContent = name.trim();
+
+        const description = document.createElement("div");
+        description.className = "app-description";
+        description.textContent = url.hostname;
+
+        card.append(icon, title, description);
+        $("appsGrid").appendChild(card);
+
+        const saved = JSON.parse(localStorage.getItem("nexusSites") || "[]");
+        saved.push({ name: name.trim(), url: url.href });
+        localStorage.setItem("nexusSites", JSON.stringify(saved));
+        notify("Website added to NEXUS.");
+    } catch (_) {
+        notify("That address doesn't look valid.");
+    }
+});
+
+function restoreSites() {
+    const saved = JSON.parse(localStorage.getItem("nexusSites") || "[]");
+    saved.forEach(site => {
+        const card = document.createElement("a");
+        card.className = "app-card";
+        card.href = site.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        const icon = document.createElement("div");
+        icon.className = "app-icon";
+        icon.textContent = site.name.charAt(0).toUpperCase();
+
+        const title = document.createElement("div");
+        title.className = "app-title";
+        title.textContent = site.name;
+
+        const description = document.createElement("div");
+        description.className = "app-description";
+        description.textContent = new URL(site.url).hostname;
+
+        card.append(icon, title, description);
+        $("appsGrid").appendChild(card);
+    });
+}
+restoreSites();
+
+function openNotes() {
+    const existing = document.getElementById("notesPanel");
+    if (existing) existing.remove();
+
+    const panel = document.createElement("section");
+    panel.id = "notesPanel";
+    panel.style.cssText = "margin-top:25px;padding:20px;background:#111522;border:1px solid #343450;border-radius:14px";
+
+    const heading = document.createElement("h2");
+    heading.textContent = "Your personal notes";
+    heading.style.cssText = "font-size:16px;margin-bottom:14px";
+
+    const area = document.createElement("textarea");
+    area.placeholder = "Write your ideas here...";
+    area.value = localStorage.getItem("nexusNotes") || "";
+    area.style.cssText = "width:100%;height:190px;resize:vertical;padding:14px;background:#090b14;color:#edf0ff;border:1px solid #252b40;border-radius:10px;outline:none;line-height:1.6";
+
+    const save = document.createElement("button");
+    save.className = "feature-button";
+    save.textContent = "Save notes";
+    save.style.marginTop = "12px";
+    save.onclick = () => {
+        localStorage.setItem("nexusNotes", area.value);
+        notify("Your notes have been saved.");
+    };
+
+    panel.append(heading, area, save);
+    $("featuresSection").after(panel);
+    panel.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function openTools() {
+    const choice = prompt("NEXUS Quick Tools\n\n1. Calculator\n2. Random number generator\n\nEnter 1 or 2:");
+    if (choice === "1") {
+        const expression = prompt("Enter a basic calculation (e.g. 25 * 4):");
+        if (!expression) return;
+        if (!/^[\d\s()+\-*/%.]+$/.test(expression)) {
+            notify("Please enter a valid basic calculation.");
+            return;
+        }
+        try {
+            const result = Function('"use strict"; return (' + expression + ')')();
+            notify("Result: " + (Number.isFinite(result) ? result : "Cannot calculate"));
+        } catch (_) {
+            notify("Invalid calculation.");
+        }
+    } else if (choice === "2") {
+        const min = Number(prompt("Minimum number:"));
+        const max = Number(prompt("Maximum number:"));
+        if (!Number.isInteger(min) || !Number.isInteger(max) || max < min) {
+            notify("Enter valid whole-number limits.");
+            return;
+        }
+        notify("Your random number: " + (Math.floor(Math.random() * (max - min + 1)) + min));
+    }
+}
+
+function showBookmarks() {
+    const bookmarks = JSON.parse(localStorage.getItem("nexusBookmarks") || "[]");
+    if (!bookmarks.length) {
+        notify("No bookmarks yet. You can add websites from the dashboard.");
+        return;
+    }
+    notify("Saved bookmarks: " + bookmarks.map(item => item.name).join(", "));
+}
+
+function showGames() {
+    const n = Math.floor(Math.random() * 100) + 1;
+    const guess = prompt("NEXUS MINI-GAME: Guess the number!\nI'm thinking of a number from 1 to 100.");
+    if (guess === null) return;
+    const value = Number(guess);
+    if (value === n) notify("Incredible! You guessed it.");
+    else notify("The number was " + n + ". Try again!");
+}
+
+$("openNotes").addEventListener("click", openNotes);
+$("openTools").addEventListener("click", openTools);
+</script>
+</body>
+</html>

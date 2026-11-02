@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUS 2.3 | Smart Digital Command Center</title>
+<style>
+:root {
+  --bg:#090b13;--panel:#111522;--panel2:#171c2b;
+  --line:#282e42;--text:#eef0ff;--muted:#9098b1;
+  --accent:#9270ff;--accent2:#67ceff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 75% 0%,#36245b44,transparent 40%),radial-gradient(ellipse at 0% 100%,#173c6040,transparent 40%),var(--bg);color:var(--text);font:14px "Segoe UI",Arial,sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}
+button,a{ -webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
+.app{display:flex;min-height:100vh}
+.sidebar{width:225px;flex-shrink:0;border-right:1px solid var(--line);padding:25px 15px;background:#0b0e18eF;display:flex;flex-direction:column;z-index:3}
+.brand{display:flex;align-items:center;gap:11px;padding:5px 8px 35px;font-size:21px;font-weight:850;letter-spacing:3px}
+.brand-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#536dff);box-shadow:0 0 24px #9270ff44;color:white;font-size:22px}
+.brand span{color:var(--accent)}
+.label{font-size:10px;color:#727d98;letter-spacing:2px;font-weight:800;padding:15px 12px 10px}
+.nav{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);text-align:left;margin-bottom:5px;width:100%;transition:.2s}
+.nav:hover,.nav.active{color:white;background:linear-gradient(90deg,#9270ff24,#67ceff08);border-color:#9270ff25}
+.nav .ico{width:21px;text-align:center;font-size:17px}
+.sidebar-foot{margin-top:auto;padding:18px 10px 5px;color:var(--muted);font-size:11px;line-height:2}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#63e6ad;margin-right:7px;box-shadow:0 0 9px #63e6ad}
+main{min-width:0;flex:1;padding:26px clamp(18px,4vw,55px);max-width:1600px;margin:auto;width:100%}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:40px}
+.crumb{font-size:12px;color:var(--muted)}.crumb strong{color:var(--text)}
+.top-right{display:flex;align-items:center;gap:13px}.clock{text-align:right;font-size:12px;line-height:1.8;color:var(--muted)}
+.avatar{width:37px;height:37px;display:grid;place-items:center;border-radius:12px;border:1px solid #9270ff66;background:#9270ff16}
+.hero{position:relative;overflow:hidden;padding:10px 0 24px;animation:rise .5s ease both}
+.hero:after{content:"";position:absolute;width:200px;height:200px;border:1px solid #9270ff12;border-radius:50%;right:5%;top:-110px;box-shadow:0 0 0 30px #9270ff06,0 0 0 60px #9270ff04;pointer-events:none}
+.eyebrow{font-size:10px;letter-spacing:3px;font-weight:800;color:var(--accent2);margin-bottom:15px}
+h1{font-size:clamp(32px,4.5vw,51px);letter-spacing:-2px;line-height:1.12;margin:0 0 14px}
+.gradient{background:linear-gradient(100deg,#b9a5ff,var(--accent2));background-clip:text;-webkit-background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:13px;line-height:1.8}
+.search{max-width:800px;display:flex;align-items:center;gap:12px;padding:8px 9px 8px 16px;border:1px solid #343650;background:#111522dd;border-radius:13px;margin:8px 0 30px;transition:.2s}
+.search:focus-within{border-color:var(--accent);box-shadow:0 0 25px #9270ff18}
+.search .glass{font-size:22px;color:#b5a6ff}
+.search input{flex:1;min-width:0;background:transparent;border:0;outline:none;color:white;padding:10px 0}
+.search input::placeholder{color:#737d96}
+.btn{border:1px solid #9270ff55;background:#9270ff18;color:#d8ceff;padding:10px 14px;border-radius:9px;transition:.2s}
+.btn:hover{background:#9270ff36;transform:translateY(-1px)}
+.btn.primary{color:white;border:0;background:linear-gradient(120deg,var(--accent),#647bff)}
+.btn.danger{color:#ff9cae;border-color:#ff657633;background:#ff657310}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:30px 0 16px}
+.heading h2{font-size:16px;margin:0 0 6px}.heading p{margin:0;font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;min-height:130px;padding:16px;text-decoration:none;color:var(--text);background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:13px;transition:transform .2s,border-color .2s;animation:rise .35s ease both}
+.card:after{content:"";position:absolute;width:90px;height:90px;right:-55px;top:-55px;background:var(--glow,var(--accent));opacity:.15;filter:blur(27px)}
+.card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.card-icon{width:40px;height:40px;display:grid;place-items:center;border:1px solid #9270ff35;border-radius:11px;background:#9270ff18;font-size:20px;margin-bottom:13px}
+.card-title{font-weight:700;font-size:13px;margin-bottom:6px;overflow-wrap:anywhere}
+.card-desc{font-size:10px;color:var(--muted);line-height:1.5;overflow-wrap:anywhere}
+.card-actions{display:flex;gap:6px;margin-top:12px;position:relative;z-index:1}
+.small-btn{padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#090b13;color:#c6cbe0;font-size:10px}
+.small-btn:hover{border-color:var(--accent)}
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.feature,.panel{padding:20px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(130deg,var(--panel2),var(--panel));min-width:0}
+.feature h3,.panel h3{font-size:14px;margin:0 0 10px}.feature p{font-size:11px;color:var(--muted);line-height:1.8;margin:0 0 15px}
+.page{animation:rise .35s ease both}.page-intro{margin:0 0 24px}
+.page-intro h1{font-size:32px;letter-spacing:-1px;margin-bottom:10px}
+.field{width:100%;background:#090c15;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:12px;margin:7px 0 13px}
+textarea.field{resize:vertical;min-height:220px;line-height:1.7}
+.form-row{display:flex;gap:10px;flex-wrap:wrap}.form-row>*{flex:1;min-width:130px}
+.empty{padding:35px 18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;line-height:1.9}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}
+.stat{padding:16px;border:1px solid var(--line);border-radius:12px;background:#111522}.stat strong{display:block;font-size:23px;margin-bottom:5px}.stat span{font-size:11px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+footer{text-align:center;color:#667089;font-size:10px;padding:35px 0 15px}
+#toast{position:fixed;right:22px;bottom:22px;z-index:20;background:#17192a;border:1px solid var(--accent);border-radius:11px;padding:13px 18px;max-width:calc(100vw - 44px);opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+.modal-back{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:18px;z-index:10}
+.modal{width:min(450px,100%);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:23px;box-shadow:0 20px 90px #0008}
+.modal h2{font-size:18px;margin:0 0 8px}.modal p{font-size:12px;color:var(--muted);line-height:1.6}
+.hidden{display:none!important}
+body.light{--bg:#edf0f8;--panel:#fff;--panel2:#f8f9ff;--line:#d9deeb;--text:#1a2033;--muted:#667089}
+body.light .sidebar{background:#f7f8fdee}body.light .search,body.light .field{background:#fff;color:var(--text)}body.light .search input{color:var(--text)}body.light .small-btn{background:#fff;color:var(--text)}body.light .stat{background:#fff}
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sidebar{width:190px}}
+@media(max-width:700px){.sidebar{width:64px;padding:20px 7px}.brand{padding:4px 5px 30px}.brand-name,.label,.nav-label,.sidebar-foot{display:none}.nav{justify-content:center;padding:12px 4px}.sidebar .brand-mark{flex-shrink:0}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:1fr}main{padding:20px 15px}.topbar{margin-bottom:27px}.stats{grid-template-columns:1fr}.hero:after{right:-100px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* NEXUS ULTIMATE VISUAL UPGRADE 2.1 */
+
+:root {
+  --bg: #070711;
+  --panel: #0e1020;
+  --panel2: #15162b;
+  --line: #292747;
+  --text: #f2f0ff;
+  --muted: #9b9bb9;
+  --accent: #a477ff;
+  --accent2: #57d8ff;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 15%, #6529b52b, transparent 38%),
+    radial-gradient(ellipse at 85% 30%, #155fc52a, transparent 38%),
+    radial-gradient(ellipse at 50% 100%, #47118a22, transparent 45%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .24;
+  background-image:
+    linear-gradient(#a477ff0a 1px, transparent 1px),
+    linear-gradient(90deg, #a477ff0a 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  animation: nexus-grid-drift 28s linear infinite;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar {
+  background: #090a16d9;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-right-color: #9a77ff26;
+  box-shadow: 8px 0 45px #00000012;
+}
+
+.brand {
+  letter-spacing: 4px;
+}
+
+.brand-mark {
+  border: 1px solid #c3a7ff70;
+  background: linear-gradient(135deg, #a477ff, #4c56e9 70%, #38bdf8);
+  box-shadow: 0 0 25px #8855ff42, inset 0 1px #ffffff50;
+  animation: nexus-mark-pulse 4s ease-in-out infinite;
+}
+
+.brand span {
+  color: var(--accent2);
+}
+
+.nav {
+  position: relative;
+  overflow: hidden;
+  border-radius: 11px;
+  transition:
+    color .22s ease,
+    background .22s ease,
+    border-color .22s ease,
+    transform .22s ease;
+}
+
+.nav:hover {
+  transform: translateX(3px);
+  background: linear-gradient(90deg, #a477ff1c, #57d8ff0a);
+  border-color: #a477ff35;
+}
+
+.nav.active {
+  color: #ffffff;
+  background: linear-gradient(100deg, #a477ff2b, #57d8ff10);
+  border-color: #a477ff55;
+  box-shadow: inset 3px 0 var(--accent), 0 0 22px #8555ff0c;
+}
+
+.nav.active .ico {
+  color: var(--accent2);
+}
+
+.sidebar-foot {
+  border-top: 1px solid #a477ff1b;
+}
+
+main {
+  position: relative;
+}
+
+.topbar {
+  padding-bottom: 15px;
+  border-bottom: 1px solid #a477ff16;
+}
+
+.avatar {
+  border-color: #a477ff66;
+  background: linear-gradient(135deg, #a477ff22, #57d8ff12);
+  box-shadow: 0 0 22px #a477ff16;
+}
+
+.hero {
+  padding-top: 20px;
+}
+
+.eyebrow {
+  text-shadow: 0 0 18px #57d8ff55;
+}
+
+h1 {
+  text-wrap: balance;
+}
+
+.gradient {
+  background-image: linear-gradient(
+    105deg,
+    #c5aaff 0%,
+    #9e82ff 35%,
+    #6bcfff 70%,
+    #c5aaff 100%
+  );
+  background-size: 200% auto;
+  animation: nexus-gradient-flow 8s ease-in-out infinite;
+}
+
+.search {
+  background: #0e1020c9;
+  border-color: #a477ff35;
+  border-radius: 15px;
+  box-shadow: 0 10px 35px #00000014;
+  backdrop-filter: blur(12px);
+}
+
+.search:focus-within {
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px #57d8ff12, 0 0 30px #a477ff19;
+}
+
+.btn {
+  border-color: #a477ff55;
+  background: linear-gradient(135deg, #a477ff19, #57d8ff08);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    border-color .2s ease,
+    background .2s ease;
+}
+
+.btn:hover {
+  border-color: var(--accent2);
+  box-shadow: 0 0 20px #a477ff20;
+}
+
+.btn.primary {
+  background: linear-gradient(115deg, #8b5cf6, #5b68ef 60%, #397fd9);
+  box-shadow: 0 5px 20px #7255ff25, inset 0 1px #ffffff35;
+}
+
+.btn.primary:hover {
+  box-shadow: 0 7px 27px #7255ff45, inset 0 1px #ffffff45;
+}
+
+.card,
+.feature,
+.panel,
+.stat {
+  border-color: #a477ff20;
+  background: linear-gradient(145deg, #19182fdf, #0d1020ed);
+  box-shadow: 0 8px 28px #00000015;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.card {
+  border-radius: 15px;
+  transition:
+    transform .24s ease,
+    border-color .24s ease,
+    box-shadow .24s ease;
+}
+
+.card::after {
+  opacity: .22;
+  transition: opacity .25s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: #a477ff88;
+  box-shadow: 0 12px 35px #00000028, 0 0 24px #a477ff12;
+}
+
+.card:hover::after {
+  opacity: .42;
+}
+
+.card-icon {
+  border-color: #a477ff44;
+  background: linear-gradient(135deg, #a477ff20, #57d8ff0d);
+  box-shadow: inset 0 1px #ffffff0c;
+}
+
+.card-title {
+  letter-spacing: .15px;
+}
+
+.feature,
+.panel {
+  border-radius: 16px;
+  transition: border-color .22s ease, box-shadow .22s ease;
+}
+
+.feature:hover,
+.panel:hover {
+  border-color: #a477ff45;
+  box-shadow: 0 10px 35px #00000018;
+}
+
+.field {
+  background: #090b18;
+  border-color: #a477ff30;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.field:focus {
+  border-color: var(--accent2);
+  outline: none;
+  box-shadow: 0 0 0 3px #57d8ff12;
+}
+
+.small-btn {
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.small-btn:hover {
+  border-color: var(--accent2);
+  background: #a477ff13;
+}
+
+.stat {
+  border-radius: 14px;
+}
+
+.stat strong {
+  color: var(--accent2);
+  text-shadow: 0 0 22px #57d8ff20;
+}
+
+.modal {
+  background: #101123f5;
+  border-color: #a477ff55;
+  box-shadow: 0 25px 100px #00000075, 0 0 45px #a477ff12;
+  backdrop-filter: blur(20px);
+}
+
+#toast {
+  background: #121329f5;
+  border-color: #a477ff77;
+  box-shadow: 0 10px 40px #00000045, 0 0 22px #a477ff12;
+  backdrop-filter: blur(15px);
+}
+
+footer {
+  letter-spacing: 1.5px;
+}
+
+body.light {
+  color-scheme: light;
+  background:
+    radial-gradient(ellipse at 15% 15%, #a477ff20, transparent 38%),
+    radial-gradient(ellipse at 85% 30%, #57d8ff18, transparent 38%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+body.light .sidebar {
+  background: #f7f7ffed;
+  box-shadow: 8px 0 35px #29305b0a;
+}
+
+body.light .card,
+body.light .feature,
+body.light .panel,
+body.light .stat {
+  background: linear-gradient(145deg, #ffffffed, #f6f5ffed);
+  border-color: #8270bb30;
+  box-shadow: 0 8px 28px #29305b0a;
+}
+
+body.light .search {
+  background: #ffffffdc;
+}
+
+body.light .modal {
+  background: #fffffffa;
+}
+
+body.light #toast {
+  background: #fffffffa;
+}
+
+@keyframes nexus-grid-drift {
+  from { background-position: 0 0; }
+  to { background-position: 42px 42px; }
+}
+
+@keyframes nexus-mark-pulse {
+  0%, 100% { box-shadow: 0 0 20px #8855ff30, inset 0 1px #ffffff50; }
+  50% { box-shadow: 0 0 32px #8855ff58, inset 0 1px #ffffff60; }
+}
+
+@keyframes nexus-gradient-flow {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    padding-bottom: 12px;
+  }
+
+  .hero {
+    padding-top: 12px;
+  }
+
+  .card:hover,
+  .nav:hover {
+    transform: none;
+  }
+
+  body::before {
+    opacity: .14;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body::before,
+  .brand-mark,
+  .gradient {
+    animation: none !important;
+  }
+}
+
+
+/* NEXUS COMMAND PALETTE 2.2 */
+#nexusCommandOverlay[hidden] {
+  display: none !important;
+}
+
+#nexusCommandOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: start center;
+  padding: min(15vh, 110px) 16px 20px;
+  background: #03040bcc;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: nexus-command-fade .16s ease both;
+}
+
+.nexus-command-box {
+  width: min(600px, 100%);
+  max-height: min(70vh, 620px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #a477ff70;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #17152cf7, #090b18f7);
+  box-shadow: 0 30px 100px #0009, 0 0 45px #8955ff20;
+  animation: nexus-command-rise .2s ease both;
+}
+
+.nexus-command-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border-bottom: 1px solid #a477ff28;
+}
+
+.nexus-command-symbol {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #a477ff50;
+  border-radius: 11px;
+  color: #bda7ff;
+  background: #a477ff17;
+  font-size: 20px;
+}
+
+.nexus-command-search {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #f2f0ff;
+  font-size: 15px;
+  padding: 8px 0;
+}
+
+.nexus-command-search::placeholder {
+  color: #9290b0;
+}
+
+.nexus-command-esc {
+  flex-shrink: 0;
+  padding: 5px 8px;
+  border: 1px solid #ffffff20;
+  border-radius: 6px;
+  color: #aaa7c6;
+  font-size: 10px;
+}
+
+.nexus-command-label {
+  padding: 15px 19px 8px;
+  color: #8f8bab;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.nexus-command-results {
+  overflow-y: auto;
+  padding: 4px 9px 12px;
+}
+
+.nexus-command-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  margin: 2px 0;
+  text-align: left;
+  color: #e9e6ff;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.nexus-command-item:hover,
+.nexus-command-item.is-selected {
+  background: linear-gradient(90deg, #a477ff25, #57d8ff0c);
+  border-color: #a477ff45;
+}
+
+.nexus-command-item.is-selected {
+  box-shadow: inset 3px 0 #a477ff;
+}
+
+.nexus-command-item[hidden] {
+  display: none !important;
+}
+
+.nexus-command-item .command-icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: #a477ff16;
+  border: 1px solid #a477ff30;
+  color: #bda7ff;
+  font-size: 17px;
+}
+
+.nexus-command-item .command-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nexus-command-item .command-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nexus-command-item .command-description {
+  color: #9996b4;
+  font-size: 10px;
+}
+
+.nexus-command-item kbd {
+  color: #a9a4c9;
+  border: 1px solid #ffffff20;
+  border-radius: 5px;
+  padding: 3px 6px;
+  font-size: 10px;
+}
+
+.nexus-command-empty {
+  padding: 28px 12px;
+  text-align: center;
+  color: #9996b4;
+  font-size: 12px;
+}
+
+.nexus-command-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 12px 18px;
+  border-top: 1px solid #a477ff25;
+  color: #9692b0;
+  font-size: 10px;
+}
+
+.nexus-command-foot strong {
+  color: #c4b4ff;
+  font-weight: 600;
+}
+
+@keyframes nexus-command-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes nexus-command-rise {
+  from { opacity: 0; transform: translateY(-8px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 600px) {
+  #nexusCommandOverlay {
+    padding: 8vh 10px 10px;
+  }
+
+  .nexus-command-head {
+    padding: 13px;
+    gap: 9px;
+  }
+
+  .nexus-command-item {
+    padding: 10px;
+  }
+
+  .nexus-command-item kbd {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #nexusCommandOverlay,
+  .nexus-command-box {
+    animation: none;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">N</div><div class="brand-name">NE<span>X</span>US</div></div>
+  <div class="label">WORKSPACE</div>
+  <button class="nav active" data-page="home"><span class="ico">⌂</span><span class="nav-label">Overview</span></button>
+  <button class="nav" data-page="websites"><span class="ico">◈</span><span class="nav-label">Websites</span></button>
+  <button class="nav" data-page="tools"><span class="ico">⌘</span><span class="nav-label">Tools</span></button>
+  <div class="label">PERSONAL</div>
+  <button class="nav" data-page="notes"><span class="ico">▤</span><span class="nav-label">Notes</span></button>
+  <button class="nav" data-page="bookmarks"><span class="ico">☆</span><span class="nav-label">Bookmarks</span></button>
+  <button class="nav" data-page="games"><span class="ico">✧</span><span class="nav-label">Games</span></button>
+  <div class="label">PREFERENCES</div>
+  <button class="nav" data-page="settings"><span class="ico">⚙</span><span class="nav-label">Settings</span></button>
+  <div class="sidebar-foot"><span class="dot"></span>System ready<br>NEXUS 2.0 · Local mode</div>
+</aside>
+
+<main>
+<header class="topbar">
+  <div class="crumb">NEXUS / <strong id="crumb">Overview</strong></div>
+  <div class="top-right"><div class="clock"><div id="time">--:--:--</div><div id="date">Loading date</div></div><div class="avatar">✦</div></div>
+</header>
+<div id="content"></div>
+<footer>NEXUS 2.3 · YOUR DIGITAL COMMAND CENTER</footer>
+</main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<div id="nexusCommandOverlay" hidden>
+  <section class="nexus-command-box" role="dialog"
+           aria-modal="true" aria-label="NEXUS command palette">
+    <div class="nexus-command-head">
+      <div class="nexus-command-symbol">⌘</div>
+      <input id="nexusCommandSearch" class="nexus-command-search"
+             type="text" placeholder="Search pages and commands..."
+             autocomplete="off" spellcheck="false"
+             aria-label="Search NEXUS commands">
+      <span class="nexus-command-esc">ESC</span>
+    </div>
+    <div class="nexus-command-label">QUICK NAVIGATION</div>
+    <div id="nexusCommandResults" class="nexus-command-results">
+      <button class="nexus-command-item" type="button"
+              data-command-page="home" data-search="home overview dashboard">
+        <span class="command-icon">⌂</span>
+        <span class="command-copy">
+          <span class="command-name">Overview</span>
+          <span class="command-description">Return to your dashboard</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <button class="nexus-command-item" type="button"
+              data-command-page="websites" data-search="websites internet links">
+        <span class="command-icon">◈</span>
+        <span class="command-copy">
+          <span class="command-name">Websites</span>
+          <span class="command-description">Open your website library</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <button class="nexus-command-item" type="button"
+              data-command-page="tools" data-search="tools calculator timer password">
+        <span class="command-icon">⌘</span>
+        <span class="command-copy">
+          <span class="command-name">Tools</span>
+          <span class="command-description">Open your built-in utilities</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <button class="nexus-command-item" type="button"
+              data-command-page="notes" data-search="notes writing text">
+        <span class="command-icon">▤</span>
+        <span class="command-copy">
+          <span class="command-name">Notes</span>
+          <span class="command-description">Open your saved notes</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <button class="nexus-command-item" type="button"
+              data-command-page="bookmarks" data-search="bookmarks favorites saved">
+        <span class="command-icon">☆</span>
+        <span class="command-copy">
+          <span class="command-name">Bookmarks</span>
+          <span class="command-description">Find your saved bookmarks</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <button class="nexus-command-item" type="button"
+              data-command-page="games" data-search="games gaming minigames">
+        <span class="command-icon">✧</span>
+        <span class="command-copy">
+          <span class="command-name">Games</span>
+          <span class="command-description">Open your gaming hub</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <button class="nexus-command-item" type="button"
+              data-command-page="settings" data-search="settings preferences theme">
+        <span class="command-icon">⚙</span>
+        <span class="command-copy">
+          <span class="command-name">Settings</span>
+          <span class="command-description">Customize your NEXUS experience</span>
+        </span>
+        <kbd>Enter</kbd>
+      </button>
+      <div id="nexusCommandEmpty" class="nexus-command-empty" hidden>
+        No matching commands found.
+      </div>
+    </div>
+    <div class="nexus-command-foot">
+      <span><strong>↑ ↓</strong> Navigate</span>
+      <span><strong>↵</strong> Open page</span>
+      <span><strong>Esc</strong> Close</span>
+    </div>
+  </section>
+</div>
+
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const read=(key,fallback)=>{try{const v=localStorage.getItem("nexus2_"+key);return v===null?fallback:JSON.parse(v)}catch{return fallback}};
+const save=(key,value)=>localStorage.setItem("nexus2_"+key,JSON.stringify(value));
+const defaults=[
+{name:"Google",url:"https://www.google.com",icon:"G",desc:"Search anything"},
+{name:"YouTube",url:"https://www.youtube.com",icon:"▶",desc:"Videos and creators"},
+{name:"ChatGPT",url:"https://chatgpt.com",icon:"✳",desc:"Ideas and intelligence"},
+{name:"GitHub",url:"https://github.com",icon:"⌘",desc:"Code and projects"},
+{name:"Reddit",url:"https://www.reddit.com",icon:"r",desc:"Communities and discussions"},
+{name:"Spotify",url:"https://open.spotify.com",icon:"♫",desc:"Music and playlists"},
+{name:"Wikipedia",url:"https://www.wikipedia.org",icon:"W",desc:"Explore knowledge"},
+{name:"Modrinth",url:"https://modrinth.com",icon:"◇",desc:"Minecraft mods"}
+];
+let sites=read("sites",defaults);
+let bookmarks=read("bookmarks",[]);
+let currentPage="home";
+let toastTimer;
+
+function toast(message){
+  $("toast").textContent=message;
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600);
+}
+function updateClock(){
+  const n=new Date();
+  $("time").textContent=n.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  $("date").textContent=n.toLocaleDateString([], {weekday:"short",month:"short",day:"numeric"});
+}
+updateClock();setInterval(updateClock,1000);
+
+function safeURL(value){
+  try{
+    let v=value.trim();
+    if(!/^https?:\/\//i.test(v))v="https://"+v;
+    const u=new URL(v);
+    if(!["https:","http:"].includes(u.protocol)||!u.hostname.includes("."))return null;
+    return u.href;
+  }catch{return null}
+}
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function openURL(url){
+  const u=safeURL(url);
+  if(!u){toast("Invalid website address.");return}
+  window.open(u,"_blank","noopener,noreferrer");
+}
+function card(site,kind="site"){
+  const index=kind==="bookmark"?bookmarks.findIndex(x=>x.url===site.url):sites.findIndex(x=>x.url===site.url);
+  return `<article class="card">
+    <div class="card-icon">${escapeHTML(site.icon||site.name?.[0]||"◈")}</div>
+    <div class="card-title">${escapeHTML(site.name)}</div>
+    <div class="card-desc">${escapeHTML(site.desc||new URL(site.url).hostname)}</div>
+    <div class="card-actions">
+      <button class="small-btn" data-open="${escapeHTML(site.url)}">Open ↗</button>
+      ${kind==="site"?`<button class="small-btn" data-bookmark="${index}">☆ Save</button><button class="small-btn" data-remove-site="${index}" aria-label="Remove website">×</button>`:`<button class="small-btn" data-remove-bookmark="${index}">Remove</button>`}
+    </div>
+  </article>`;
+}
+function sectionHeading(title,description,button=""){
+  return `<div class="heading"><div><h2>${title}</h2><p>${description}</p></div>${button}</div>`;
+}
+function pageIntro(title,description){
+  return `<div class="page-intro"><div class="eyebrow">NEXUS / COMMAND CENTER</div><h1>${title}</h1><p class="sub">${description}</p></div>`;
+}
+function renderHome(){
+  const widgets = read("dashboardWidgets", {
+    clock: true, launch: true, recent: true
+  });
+  const recent = read("recentPages", []);
+  const validRecent = Array.isArray(recent)
+    ? recent.filter(p => Object.prototype.hasOwnProperty.call(titles, p)).slice(0, 5)
+    : [];
+
+  const toggle = (key, label) =>
+    `<button type="button" class="nexus-dashboard-toggle"
+      data-dashboard-toggle="${key}" aria-pressed="${widgets[key] !== false}">
+      <span class="toggle-dot"></span>${label}
+    </button>`;
+
+  const clockCard = widgets.clock !== false ? `
+    <article class="nexus-smart-card">
+      <div class="nexus-smart-label">LOCAL TIME</div>
+      <div id="nexusSmartClock" class="nexus-smart-time">--:--:--</div>
+      <div id="nexusSmartDate" class="nexus-smart-date">Loading date...</div>
+      <div class="nexus-smart-status">
+        <span class="dot"></span> SYSTEM ONLINE
+      </div>
+    </article>` : "";
+
+  const launchCard = widgets.launch !== false ? `
+    <article class="nexus-smart-card">
+      <div class="nexus-smart-label">QUICK LAUNCH</div>
+      <div class="nexus-smart-shortcuts">
+        <button class="nexus-smart-shortcut" data-go="websites" type="button">
+          <span>◈</span><strong>Websites</strong>
+        </button>
+        <button class="nexus-smart-shortcut" data-go="tools" type="button">
+          <span>⌘</span><strong>Tools</strong>
+        </button>
+        <button class="nexus-smart-shortcut" data-go="notes" type="button">
+          <span>▤</span><strong>Notes</strong>
+        </button>
+        <button class="nexus-smart-shortcut" data-go="games" type="button">
+          <span>✧</span><strong>Games</strong>
+        </button>
+      </div>
+      <p class="nexus-smart-hint">Jump straight to your favorite NEXUS pages.</p>
+    </article>` : "";
+
+  const recentCard = widgets.recent !== false ? `
+    <article class="nexus-smart-card">
+      <div class="nexus-smart-label">RECENT PAGES</div>
+      <div class="nexus-smart-recent">
+        ${validRecent.length
+          ? validRecent.map(p => `
+            <button type="button" data-go="${p}">
+              <span>${titles[p]}</span><small>Open ↗</small>
+            </button>`).join("")
+          : `<p class="sub">Your visited pages will appear here as you explore NEXUS.</p>`
+        }
+      </div>
+    </article>` : "";
+
+  return `<section class="hero">
+    <div class="eyebrow">NEXUS 2.3 · SMART DASHBOARD</div>
+    <h1>Your digital<br><span class="gradient">command center.</span></h1>
+    <p class="sub">One space. Your tools, websites, ideas, and games — ready when you are.</p>
+  </section>
+
+  <div class="nexus-smart-grid">
+    ${clockCard}
+    ${launchCard}
+    ${recentCard}
+  </div>
+
+  <section aria-label="Dashboard customization">
+    <div class="heading">
+      <div>
+        <h2>Customize dashboard</h2>
+        <p>Choose which cards appear on your Overview page.</p>
+      </div>
+    </div>
+    <div class="nexus-dashboard-options">
+      ${toggle("clock", "Live clock")}
+      ${toggle("launch", "Quick launch")}
+      ${toggle("recent", "Recent pages")}
+    </div>
+  </section>
+
+  <form class="search" id="searchForm">
+    <span class="glass">⌕</span>
+    <input id="searchInput" placeholder="Search the web or enter a website..."
+      autocomplete="off" aria-label="Search the web">
+    <button class="btn primary">Search ↗</button>
+  </form>
+
+  ${sectionHeading("Your websites","Your internet, organized.",
+    '<button class="btn" data-action="add-site">+ Add website</button>')}
+  <div class="grid">${sites.map(s=>card(s)).join("")||
+    '<div class="empty">No websites yet. Add one to get started.</div>'}</div>
+
+  ${sectionHeading("Your command center","Your personal tools, all in one place.")}
+  <div class="feature-grid">
+    <article class="feature">
+      <h3>▤ &nbsp; Personal notes</h3>
+      <p>Save ideas, plans, and thoughts in your browser.</p>
+      <button class="btn" data-go="notes">Open notes ↗</button>
+    </article>
+    <article class="feature">
+      <h3>✧ &nbsp; Quick tools</h3>
+      <p>Calculate expressions, generate random numbers, and test your luck.</p>
+      <button class="btn" data-go="tools">Explore tools ↗</button>
+    </article>
+  </div>`;
+}
+function renderWebsites(){
+  return `${pageIntro("Your websites","Add, organize, and open your favorite websites.")}${sectionHeading("Website library",sites.length+" shortcuts saved",'<button class="btn primary" data-action="add-site">+ Add website</button>')}<div class="grid">${sites.map(s=>card(s)).join("")||'<div class="empty">Your library is empty. Add your first website.</div>'}</div>`;
+}
+function renderBookmarks(){
+  return `${pageIntro("Your bookmarks","Your saved corners of the internet.")}${sectionHeading("Saved websites",bookmarks.length+" bookmarks")}<div class="grid">${bookmarks.map(s=>card(s,"bookmark")).join("")||'<div class="empty">No bookmarks yet.<br>Go to Websites and press ☆ Save on any website.</div>'}</div>`;
+}
+function renderNotes(){
+  return `${pageIntro("Personal notes","Your thoughts are saved locally in this browser.")}<section class="panel"><h3>▤ &nbsp; My notebook</h3><p class="sub">Notes are stored in this browser profile, not uploaded to a server.</p><textarea id="notesArea" class="field" placeholder="Write your ideas, plans, or reminders here...">${escapeHTML(read("notes",""))}</textarea><button class="btn primary" data-action="save-notes">Save notes</button> <button class="btn" data-action="clear-notes">Clear</button><span id="noteStatus" class="sub" style="margin-left:10px"></span></section>`;
+}
+function renderTools(){
+  return `${pageIntro("Quick tools","Simple utilities built directly into NEXUS.")}
+  <div class="feature-grid">
+    <section class="panel"><h3>⌘ &nbsp; Calculator</h3><p class="sub">Basic arithmetic using +, −, ×, ÷ and parentheses.</p><input id="calcInput" class="field" placeholder="Example: (25 + 5) * 4"><button class="btn primary" data-action="calculate">Calculate</button><p id="calcResult" class="sub" style="margin-top:15px"></p></section>
+    <section class="panel"><h3>🎲 &nbsp; Random number</h3><p class="sub">Generate a random whole number between two limits.</p><div class="form-row"><input id="randMin" class="field" type="number" value="1" aria-label="Minimum"><input id="randMax" class="field" type="number" value="100" aria-label="Maximum"></div><button class="btn primary" data-action="random">Generate</button><p id="randResult" class="sub" style="margin-top:15px"></p></section>
+    <section class="panel"><h3>⌁ &nbsp; Password generator</h3><p class="sub">Generate a random password locally. Do not use this demo as a password manager.</p><div class="form-row"><input id="passLength" class="field" type="number" min="8" max="64" value="16" aria-label="Password length"><button class="btn primary" data-action="password">Generate</button></div><input id="passResult" class="field" readonly aria-label="Generated password" placeholder="Your generated password"><button class="btn" data-action="copy-password">Copy</button></section>
+    <section class="panel"><h3>⏱ &nbsp; Focus timer</h3><p class="sub">Start a 5-minute focus session.</p><div id="timerDisplay" style="font-size:35px;font-weight:750;margin:20px 0">05:00</div><button class="btn primary" data-action="timer">Start / Pause</button> <button class="btn" data-action="reset-timer">Reset</button></section>
+  </div>`;
+}
+function renderGames(){
+  return `${pageIntro("Mini-games","Take a break. Play something right here in NEXUS.")}
+  <section class="panel"><h3>✧ &nbsp; Guess the number</h3><p class="sub">I'm thinking of a number between 1 and 100. Can you guess it?</p><div class="form-row"><input id="guessInput" class="field" type="number" min="1" max="100" placeholder="Your guess"><button class="btn primary" data-action="guess">Guess</button><button class="btn" data-action="new-game">New game</button></div><p id="guessMessage" class="sub" aria-live="polite"></p><p id="guessCount" class="sub"></p></section>
+  <section class="panel" style="margin-top:15px"><h3>✊ &nbsp; Rock, paper, scissors</h3><p class="sub">Choose your move against the computer.</p><div class="form-row"><button class="btn" data-rps="rock">✊ Rock</button><button class="btn" data-rps="paper">✋ Paper</button><button class="btn" data-rps="scissors">✌ Scissors</button></div><p id="rpsResult" class="sub" style="margin-top:15px"></p></section>`;
+}
+function renderSettings(){
+  const accent=read("accent","#9270ff");
+  return `${pageIntro("Settings","Make NEXUS feel like your own.")}
+  <section class="panel"><h3>Appearance</h3><p class="sub">Choose your interface theme and accent color.</p><div class="form-row" style="margin:15px 0"><button class="btn" data-action="dark-theme">Dark theme</button><button class="btn" data-action="light-theme">Light theme</button></div><label for="accentPicker" class="sub">Accent color</label><input id="accentPicker" type="color" value="${escapeHTML(accent)}" style="display:block;width:70px;height:42px;margin:10px 0 18px;background:transparent;border:0;cursor:pointer"><button class="btn primary" data-action="save-accent">Save accent</button></section>
+  <section class="panel" style="margin-top:15px"><h3>Local data</h3><p class="sub">Your notes, website shortcuts, bookmarks, and preferences are saved in your browser. Clearing browser storage may remove them.</p><button class="btn" data-action="export-data">Export backup</button> <button class="btn danger" data-action="reset-data">Reset NEXUS data</button><input id="importFile" type="file" accept="application/json,.json" class="hidden"></section>
+  <section class="panel" style="margin-top:15px"><h3>About NEXUS</h3><p class="sub">Version 2.3 · Runs locally in your browser. External websites open in new tabs. This is a personal dashboard, not a full browser or an online account system.</p></section>`;
+}
+const renderers={home:renderHome,websites:renderWebsites,bookmarks:renderBookmarks,notes:renderNotes,tools:renderTools,games:renderGames,settings:renderSettings};
+const titles={home:"Overview",websites:"Websites",bookmarks:"Bookmarks",notes:"Notes",tools:"Tools",games:"Games",settings:"Settings"};
+
+function navigate(page){
+  if(!renderers[page])return;
+  currentPage=page;
+  trackNexusRecentPage(page);
+  $("crumb").textContent=titles[page];
+  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  $("content").innerHTML=`<section class="page">${renderers[page]()}</section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.page)));
+
+function addWebsite(){
+  modal("Add a website",`<label class="sub" for="siteName">Website name</label><input id="siteName" class="field" placeholder="Example: My favorite site"><label class="sub" for="siteURL">Website address</label><input id="siteURL" class="field" placeholder="https://example.com"><div class="form-row"><button class="btn primary" id="confirmAdd">Add website</button><button class="btn" data-close>Cancel</button></div>`);
+  $("confirmAdd").onclick=()=>{
+    const name=$("siteName").value.trim(),url=safeURL($("siteURL").value);
+    if(!name||!url){toast("Enter a name and a valid web address.");return}
+    if(sites.some(s=>s.url===url)){toast("That website is already in your library.");return}
+    sites.push({name,url,icon:name.charAt(0).toUpperCase(),desc:new URL(url).hostname});
+    save("sites",sites);closeModal();navigate("websites");toast("Website added.");
+  };
+}
+function modal(title,body){
+  $("modalRoot").innerHTML=`<div class="modal-back" data-backdrop><section class="modal" role="dialog" aria-modal="true" aria-label="${escapeHTML(title)}"><h2>${escapeHTML(title)}</h2>${body}</section></div>`;
+}
+function closeModal(){$("modalRoot").innerHTML=""}
+$("modalRoot").addEventListener("click",e=>{if(e.target.matches("[data-backdrop],[data-close]"))closeModal()});
+
+$("content").addEventListener("submit",e=>{
+  if(e.target.id!=="searchForm")return;
+  e.preventDefault();
+  const q=$("searchInput").value.trim();if(!q)return;
+  if(!/\s/.test(q)&&/^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(q)){
+    openURL(q);
+  }else{
+    openURL("https://www.google.com/search?q="+encodeURIComponent(q));
+  }
+});
+
+$("content").addEventListener("click",async e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.go){navigate(b.dataset.go);return}
+  if(b.dataset.action==="add-site"){addWebsite();return}
+  if(b.dataset.open){openURL(b.dataset.open);return}
+  if(b.dataset.bookmark!==undefined){
+    const site=sites[Number(b.dataset.bookmark)];if(!site)return;
+    if(bookmarks.some(x=>x.url===site.url)){toast("Already bookmarked.");return}
+    bookmarks.push({...site});save("bookmarks",bookmarks);toast("Bookmark saved.");navigate(currentPage);return;
+  }
+  if(b.dataset.removeSite!==undefined){
+    const i=Number(b.dataset.removeSite);if(!sites[i])return;
+    if(!confirm("Remove "+sites[i].name+" from your website library?"))return;
+    sites.splice(i,1);save("sites",sites);navigate(currentPage);toast("Website removed.");return;
+  }
+  if(b.dataset.removeBookmark!==undefined){
+    bookmarks.splice(Number(b.dataset.removeBookmark),1);save("bookmarks",bookmarks);navigate(currentPage);toast("Bookmark removed.");return;
+  }
+  switch(b.dataset.action){
+    case "save-notes":save("notes",$("notesArea").value);$("noteStatus").textContent="Saved locally.";toast("Notes saved.");break;
+    case "clear-notes":if(confirm("Clear all your notes?")){$("notesArea").value="";save("notes","");toast("Notes cleared.");}break;
+    case "calculate":{
+      const expression=$("calcInput").value.trim();
+      if(!expression||!/^[\d\s()+\-*/%.]+$/.test(expression)){$("calcResult").textContent="Enter a valid arithmetic expression.";break}
+      try{const result=Function('"use strict";return ('+expression+')')();$("calcResult").textContent=Number.isFinite(result)?"Result: "+result:"Cannot calculate that expression."}catch{$("calcResult").textContent="Invalid expression."}break;
+    }
+    case "random":{
+      const min=Number($("randMin").value),max=Number($("randMax").value);
+      if(!Number.isInteger(min)||!Number.isInteger(max)||max<min||max-min>1000000000){$("randResult").textContent="Enter valid whole-number limits.";break}
+      $("randResult").textContent="Your number: "+(Math.floor(Math.random()*(max-min+1))+min);break;
+    }
+    case "password":{
+      const length=Number($("passLength").value);
+      if(!Number.isInteger(length)||length<8||length>64){toast("Choose a length from 8 to 64.");break}
+      const chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*?";
+      const bytes=new Uint32Array(length);crypto.getRandomValues(bytes);
+      $("passResult").value=Array.from(bytes,x=>chars[x%chars.length]).join("");break;
+    }
+    case "copy-password":{
+      if(!$("passResult").value){toast("Generate a password first.");break}
+      try{await navigator.clipboard.writeText($("passResult").value);toast("Copied to clipboard.")}catch{toast("Clipboard unavailable. Select and copy the text.")}break;
+    }
+    case "timer":toggleTimer();break;
+    case "reset-timer":resetTimer();break;
+    case "guess":guessNumber();break;
+    case "new-game":startGuessGame();break;
+    case "dark-theme":document.body.classList.remove("light");save("theme","dark");toast("Dark theme enabled.");break;
+    case "light-theme":document.body.classList.add("light");save("theme","light");toast("Light theme enabled.");break;
+    case "save-accent":{
+      const color=$("accentPicker").value;document.documentElement.style.setProperty("--accent",color);save("accent",color);toast("Accent color updated.");break;
+    }
+    case "export-data":exportData();break;
+    case "reset-data":if(confirm("Reset all NEXUS 2.0 data in this browser? This cannot be undone.")){Object.keys(localStorage).filter(k=>k.startsWith("nexus2_")).forEach(k=>localStorage.removeItem(k));location.reload()}break;
+  }
+});
+
+let target=0,attempts=0;
+function startGuessGame(){target=Math.floor(Math.random()*100)+1;attempts=0;const m=$("guessMessage");if(m)m.textContent="New number selected. Make your first guess!";const c=$("guessCount");if(c)c.textContent="Attempts: 0"}
+function guessNumber(){
+  const input=$("guessInput"),message=$("guessMessage");if(!input||!message)return;
+  const value=Number(input.value);
+  if(!Number.isInteger(value)||value<1||value>100){message.textContent="Enter a whole number from 1 to 100.";return}
+  if(!target)startGuessGame();
+  attempts++;
+  message.textContent=value===target?"Correct! You got it!":value<target?"Too low. Try a higher number.":"Too high. Try a lower number.";
+  $("guessCount").textContent="Attempts: "+attempts;
+  if(value===target)target=0;
+}
+$("content").addEventListener("click",e=>{
+  const b=e.target.closest("[data-rps]");if(!b)return;
+  const you=b.dataset.rps,computer=["rock","paper","scissors"][Math.floor(Math.random()*3)];
+  let result=you===computer?"It's a draw!":({rock:"scissors",paper:"rock",scissors:"paper"}[you]===computer?"You win!":"Computer wins!");
+  $("rpsResult").textContent=`You chose ${you}; computer chose ${computer}. ${result}`;
+});
+
+let timerSeconds=300,timerInterval=null;
+function displayTimer(){const el=$("timerDisplay");if(el)el.textContent=String(Math.floor(timerSeconds/60)).padStart(2,"0")+":"+String(timerSeconds%60).padStart(2,"0")}
+function toggleTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;toast("Timer paused.");return}
+  timerInterval=setInterval(()=>{
+    if(timerSeconds>0)timerSeconds--;
+    displayTimer();
+    if(timerSeconds<=0){clearInterval(timerInterval);timerInterval=null;toast("Focus session complete!");}
+  },1000);
+}
+function resetTimer(){clearInterval(timerInterval);timerInterval=null;timerSeconds=300;displayTimer()}
+
+function exportData(){
+  const data={version:2,sites,bookmarks,notes:read("notes",""),theme:read("theme","dark"),accent:read("accent","#9270ff")};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="nexus-backup.json";a.click();URL.revokeObjectURL(a.href);toast("Backup exported.");
+}
+function applyPreferences(){
+  if(read("theme","dark")==="light")document.body.classList.add("light");
+  document.documentElement.style.setProperty("--accent",read("accent","#9270ff"));
+}
+
+// NEXUS COMMAND PALETTE 2.2
+(function initNexusCommandPalette() {
+  const overlay = $("nexusCommandOverlay");
+  const search = $("nexusCommandSearch");
+  const results = $("nexusCommandResults");
+  const empty = $("nexusCommandEmpty");
+
+  if (!overlay || !search || !results || !empty) return;
+
+  let selectedIndex = 0;
+  let previouslyFocused = null;
+
+  function visibleItems() {
+    return [...results.querySelectorAll("[data-command-page]")]
+      .filter(item => !item.hidden);
+  }
+
+  function selectItem(index) {
+    const items = visibleItems();
+    if (!items.length) {
+      selectedIndex = 0;
+      return;
+    }
+
+    selectedIndex = (index + items.length) % items.length;
+
+    items.forEach((item, i) => {
+      const selected = i === selectedIndex;
+      item.classList.toggle("is-selected", selected);
+      item.setAttribute("aria-selected", String(selected));
+    });
+
+    items[selectedIndex].scrollIntoView({ block: "nearest" });
+  }
+
+  function filterItems() {
+    const query = search.value.trim().toLowerCase();
+
+    results.querySelectorAll("[data-command-page]").forEach(item => {
+      const text = (
+        item.dataset.search + " " + item.textContent
+      ).toLowerCase();
+
+      item.hidden = !text.includes(query);
+    });
+
+    const items = visibleItems();
+    empty.hidden = items.length !== 0;
+    selectItem(0);
+  }
+
+  function openPalette() {
+    if (!overlay.hidden) {
+      search.focus();
+      return;
+    }
+
+    previouslyFocused = document.activeElement;
+    overlay.hidden = false;
+    search.value = "";
+    filterItems();
+
+    requestAnimationFrame(() => search.focus());
+  }
+
+  function closePalette() {
+    if (overlay.hidden) return;
+
+    overlay.hidden = true;
+
+    if (previouslyFocused && previouslyFocused.isConnected) {
+      previouslyFocused.focus();
+    }
+  }
+
+  function executeSelected() {
+    const item = visibleItems()[selectedIndex];
+    if (!item) return;
+
+    const page = item.dataset.commandPage;
+    closePalette();
+    navigate(page);
+  }
+
+  search.addEventListener("input", filterItems);
+
+  search.addEventListener("keydown", event => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      selectItem(selectedIndex + 1);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      selectItem(selectedIndex - 1);
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      executeSelected();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      closePalette();
+    }
+  });
+
+  results.addEventListener("click", event => {
+    const item = event.target.closest("[data-command-page]");
+    if (!item || item.hidden) return;
+
+    selectedIndex = visibleItems().indexOf(item);
+    executeSelected();
+  });
+
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) closePalette();
+  });
+
+  document.addEventListener("keydown", event => {
+    const key = event.key.toLowerCase();
+
+    if ((event.ctrlKey || event.metaKey) && key === "k") {
+      event.preventDefault();
+      openPalette();
+    } else if (event.key === "Escape" && !overlay.hidden) {
+      closePalette();
+    }
+  });
+})();
+
+
+// NEXUS SMART DASHBOARD 2.3
+function trackNexusRecentPage(page) {
+  if (!Object.prototype.hasOwnProperty.call(titles, page)) return;
+
+  let recent = read("recentPages", []);
+  if (!Array.isArray(recent)) recent = [];
+
+  recent = [page, ...recent.filter(p => p !== page)]
+    .filter(p => Object.prototype.hasOwnProperty.call(titles, p))
+    .slice(0, 5);
+
+  save("recentPages", recent);
+}
+
+function updateNexusSmartClock() {
+  const clock = $("nexusSmartClock");
+  const date = $("nexusSmartDate");
+  if (!clock && !date) return;
+
+  const now = new Date();
+
+  if (clock) {
+    clock.textContent = new Intl.DateTimeFormat(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).format(now);
+  }
+
+  if (date) {
+    date.textContent = new Intl.DateTimeFormat(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    }).format(now);
+  }
+}
+
+updateNexusSmartClock();
+setInterval(updateNexusSmartClock, 1000);
+
+$("content").addEventListener("click", event => {
+  const button = event.target.closest("[data-dashboard-toggle]");
+  if (!button) return;
+
+  const key = button.dataset.dashboardToggle;
+  if (!["clock", "launch", "recent"].includes(key)) return;
+
+  const preferences = read("dashboardWidgets", {
+    clock: true, launch: true, recent: true
+  });
+
+  preferences[key] = preferences[key] === false;
+  save("dashboardWidgets", preferences);
+  navigate("home");
+  toast("Dashboard preferences saved.");
+});
+
+applyPreferences();
+navigate("home");
+</script>
+</body>
+</html>
